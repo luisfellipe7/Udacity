@@ -1,0 +1,59 @@
+body {
+    font-family: 'Oswald', sans-serif;
+    color: #153243;
+    font-weight: 300;
+}
+
+h2 {
+    color: #153243;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+}
+
+.big-txt {
+    font-size: 50px;
+    font-weight: 100;
+}
+
+.txt-muted {
+    color: #BCBBBB;
+    margin-left: 3%;
+}
+
+.app-txt {
+    font-size: 30px;
+}
+
+.img-logo {
+    padding: 5%;
+}
+
+a:link {
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    color: #153243;
+}
+
+a:visited {
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    color: #284B63;
+}
+
+a:hover {
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    color: #284B63;
+}
+
+a:active {
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    color: #153243;
+}
+
+hr {
+    color: #BCBBBB;
+background-color: #BCBBBB;
+height: 2.5px;
+}
