@@ -14,7 +14,7 @@
  * a little simpler to work with.
  */
 
-var Engine = (function(global) {
+var Engine = (function (global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
@@ -28,6 +28,12 @@ var Engine = (function(global) {
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
+    // Prepare helper-contexts for pixel-based collision detections
+    var canvasPlayer = doc.createElement('canvas'),
+        ctxPlayer = canvasPlayer.getContext('2d');
+    var canvasEnemy = doc.createElement('canvas'),
+        ctxEnemy = canvasEnemy.getContext('2d');
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -67,6 +73,14 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
+
+        drawHelperContexts();
+    }
+
+    function drawHelperContexts() {
+        // Put entities on contexts for pixel-based collision detection
+        ctxPlayer.drawImage(Resources.get(player.sprite), 0, 0);
+        ctxEnemy.drawImage(Resources.get(allEnemies[0].sprite), 0, 0);
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -79,8 +93,10 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        updateEntities(dt);
-        // checkCollisions();
+        if (!settings.pause) {
+            updateEntities(dt);
+            checkCollisions();
+        }
     }
 
     /* This is called by the update function  and loops through all of the
@@ -91,10 +107,95 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    /* This is called by the update function and checks all enemy
+     * objects for collisions with the player. Collision detection will
+     * be done in steps to reduce unneeded calculations:
+     * 1. check which enemies are on the same row as the player
+     * 2. filter out enemies with overlapping bounding boxes
+     * 3. calculate intersection of those overlaps
+     * 4. check those intersections for overlapping pixels
+     */
+    function checkCollisions() {
+        // First filter out the enemies on the same row as the player to
+        // avoid expensive calculations
+        allEnemies.forEach(function (enemy) {
+            enemy.threatLevel = 0; // Enemy is harmless
+            if (enemy.y === player.y) {
+                enemy.threatLevel = 1; // Enemy is on the same row
+                if (enemy.x + 101 <= player.x) {
+                    // Bounding box of the enemy is left of the player
+                } else if (enemy.x >= player.x + 101) {
+                    // Bounding box of the enemy is right of the player
+                } else {
+                    // Enemies bounding box is overlapping
+                    enemy.threatLevel = 2;
+                    var intersection = getIntersection(enemy, player);
+                    hud.intersections.push(intersection);
+
+                    if (isPixelCollision(enemy, player, intersection)) {
+                        console.log("Player has been hit by an enemy!");
+                        score = 0;
+                        document.getElementById('playerScore').innerHTML = score;
+                        player.reset();
+                    }
+                }
+            }
+        });
+    }
+
+    function getIntersection(entityA, entityB) {
+        // Calculating intersection
+        var box = {
+            x: Math.max(entityA.x, entityB.x),
+            width: Math.min(entityA.x + 101, entityB.x + 101) -
+                Math.max(entityA.x, entityB.x),
+            // Entities have the same y-position and height
+            y: entityA.y,
+            height: entityA.height
+        };
+        return box;
+    }
+
+    function isPixelCollision(enemy, player, intersection) {
+        // If bounding boxes are intersecting, check the overlapping
+        // pixels from both sprites for alpha channel values not equal
+        // to 0. In that particular case there would be a collision.
+
+        // Get ImageData objects of player and enemy
+        var playerPixels, enemyPixels;
+        if (enemy.x < player.x) {
+            // Enemy is on the left
+            playerPixels = ctxPlayer.getImageData(
+                0, 0, intersection.width, intersection.height);
+            enemyPixels = ctxEnemy.getImageData(
+                enemy.width - intersection.width, 0,
+                intersection.width, intersection.height);
+        } else {
+            // Enemy is on the right
+            playerPixels = ctxPlayer.getImageData(
+                player.width - intersection.width, 0,
+                intersection.width, intersection.height);
+            enemyPixels = ctxEnemy.getImageData(0, 0,
+                intersection.width, intersection.height);
+        }
+
+        for (var x = 0; x < intersection.width; x++) {
+            for (var y = 0; y < intersection.height; y++) {
+                // The pixel actual check; if pixel from both sprites is
+                // not transparant, the collision has happened.
+                if (playerPixels.data[(y * intersection.width + x) * 4 + 3] !== 0 &&
+                    enemyPixels.data[(y * intersection.width + x) * 4 + 3] !== 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /* This function initially draws the "game level", it will then call
@@ -108,12 +209,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -132,12 +233,13 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]),
+                    col * 101, row * 83);
             }
         }
 
-
         renderEntities();
+        hud.render();
     }
 
     /* This function is called by the render function and is called on each game
@@ -148,7 +250,7 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        allEnemies.forEach(function(enemy) {
+        allEnemies.forEach(function (enemy) {
             enemy.render();
         });
 
