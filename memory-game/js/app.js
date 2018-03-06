@@ -11,11 +11,12 @@ var start_game = false;
 
 // timer object
 var timer = new Timer();
-timer.addEventListener('secondsUpdated', function (e) {                   $('#timer').html(timer.getTimeValues().toString());
+timer.addEventListener('secondsUpdated', function (e) {
+    $('#timer').html(timer.getTimeValues().toString());
 });
 
 // reference to restart button
-$('#reset-button').click(resetGame);
+$('#restart-game').click(resetGame);
 // create and append card html
 function createCard(card) {
     $('#deck').append(`<li class="card animated"><i class="fa ${card}"></i></li>`);
@@ -29,8 +30,8 @@ function generateCards() {
 }
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length
-        , temporaryValue, randomIndex;
+    var currentIndex = array.length,
+        temporaryValue, randomIndex;
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
@@ -45,19 +46,18 @@ openCards = [];
 
 // card functionality
 function toggleCard() {
-    
+
     // start the timer when first card is opened
     if (start_game == false) {
         start_game = true;
         timer.start();
     }
-    
+
     if (openCards.length === 0) {
         $(this).toggleClass("show open").animateCss('flipInY');
         openCards.push($(this));
         disableCLick();
-    }
-    else if (openCards.length === 1) {
+    } else if (openCards.length === 1) {
         // increment moves
         updateMoves();
         $(this).toggleClass("show open").animateCss('flipInY');
@@ -84,8 +84,7 @@ function matchOpenCards() {
         disableCLick();
         removeOpenCards();
         setTimeout(checkWin, 1000);
-    }
-    else {
+    } else {
         openCards[0].toggleClass("show open").animateCss('flipInY');
         openCards[1].toggleClass("show open").animateCss('flipInY');
         enableClick();
@@ -112,8 +111,7 @@ function updateMoves() {
     $('#moves').html(`${moves} Moves`);
     if (moves == 24) {
         addBlankStar();
-    }
-    else if (moves == 15) {
+    } else if (moves == 15) {
         addBlankStar();
     }
 }
@@ -143,7 +141,7 @@ function resetGame() {
     $('#stars').empty();
     $('#game-deck')[0].style.display = "";
     $('#sucess-result')[0].style.display = "none";
-    start_game=false;
+    start_game = false;
     timer.stop();
     $('#timer').html("00:00:00");
     playGame();
@@ -188,7 +186,7 @@ function showResults() {
     $('#game-deck')[0].style.display = "none";
     $('#sucess-result')[0].style.display = "block";
     $('#sucess-result').append($(scoreBoard));
-    $('#restart').click(resetGame);
+    $('#restart-game').click(resetGame);
 }
 
 // start the game

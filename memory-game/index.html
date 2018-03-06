@@ -13,21 +13,19 @@
 <body>
     <div class="container" id="game-deck">
         <header>
-            <h1>Matching Game</h1> </header>
+            <h1>Matching Game</h1>
+        </header>
         <section class="score-panel">
-            <ul class="stars" id="stars"> </ul> <span  id="moves"></span>
+            <ul class="stars" id="stars"> </ul> <span id="moves"></span>
             <div class="text-right">
-                
                 <span class="timer" id="timer">00:00:00</span>
-                <div class="restart">
-                    <i class="fas fa-redo" id="reset-button"></i> 
-                </div>
             </div>
         </section>
         <ul class="deck" id="deck"> </ul>
     </div>
     <!-- Result-->
     <div class="container" id="sucess-result"></div>
+    <div class="container" id="restart-game"><i class="fas fa-redo" id="restart"></i></div>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script src="js/easytimer.min.js"></script>
     <script src="js/app.js"></script>
