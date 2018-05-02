@@ -4,7 +4,7 @@ React app for listing books that you are interested in.
 
 Built on top of the [starter template](https://github.com/udacity/reactnd-project-myreads-starter) for the final assessment project for Udacity's React Fundamentals course, developed by [React Training](https://reacttraining.com). 
 
-## :zap: Quickstart
+## Quickstart
 
 1. Clone the repo
 2. cd into the project root and run `npm install`
