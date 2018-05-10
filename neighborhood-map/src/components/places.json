@@ -1,0 +1,32 @@
+[
+  {
+    "name": "9 de Julho Square",
+    "type": "Square",
+    "latitude": -22.414372,
+    "longitude": -50.575511
+  },
+  {
+    "name": "Sabesp",
+    "type": "Water Supplier",
+    "latitude": -22.414372,
+    "longitude": -50.582413
+  },
+  {
+    "name": "Feira da Barra Funda",
+    "type": "Place",
+    "latitude": -22.414372,
+    "longitude": -50.572248
+  },
+  {
+    "name": "Hippo Pizza",
+    "type": "Restaurant",
+    "latitude": -22.414372,
+    "longitude": -50.577097
+  },
+  {
+    "name": "Drogaria Catedral",
+    "type": "Pharmacy",
+    "latitude": -22.414372,
+    "longitude": -50.574754
+  }
+]
