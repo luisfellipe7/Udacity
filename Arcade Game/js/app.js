@@ -21,22 +21,11 @@ Enemy.prototype.update = function(dt) {
     if (this.x >= 505) {
         this.x = 0;
     }
-    this.checkCollision();
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-// checks en enemy's collision with player
-Enemy.prototype.checkCollision = function() {
-    if (player.y + 131 >= this.y + 90 &&
-        player.y + 73 <= this.y + 135 &&
-        player.x + 25 <= this.x + 88 &&
-        player.x + 76 >= this.x + 11) {
-        gameReset();
-    }
 };
 
 // Now write your own player class
