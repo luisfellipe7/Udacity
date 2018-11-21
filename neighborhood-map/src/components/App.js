@@ -26,7 +26,7 @@ class App extends Component {
     window.initMap = this.initMap;
     // Asynchronously load the Google Maps script, passing in the callback reference
     loadMapJS(
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyB3YCtXHLjzkUoiD9aMY6pxeLidJPAT824&callback=initMap"
+      "https://maps.googleapis.com/maps/api/js?key=API&callback=initMap"
     );
   }
 
